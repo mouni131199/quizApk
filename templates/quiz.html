@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: red;
+            float: right;
+        }
+    </style>
+</head>
+<body onload="goFullScreen(); startTimer();">
+
+    <h2>Welcome to the Quiz</h2>
+    <div class="timer" id="timer">Time Left: 05:00</div>
+
+    <form method="POST" id="quizForm">
+        {% for q in questions %}
+            <div>
+                <p><strong>Q{{ loop.index }}. {{ q.question }}</strong></p>
+                {% for opt in q.options %}
+                    <label>
+                        <input type="radio" name="q{{ loop.index0 }}" value="{{ opt }}" required> {{ opt }}
+                    </label><br>
+                {% endfor %}
+            </div><br>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+
+<script>
+    let formSubmitted = false;
+
+    // ========== TIMER ==========
+    let timeLeft = 5 * 60; // 5 minutes in seconds
+    const timerElement = document.getElementById("timer");
+
+    function startTimer() {
+        updateTimerDisplay();  // Show initial time
+        const timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                autoSubmit("Time is up! Submitting your quiz.");
+            } else {
+                timeLeft--;
+                updateTimerDisplay();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerElement.textContent = `Time Left: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // ========== FULLSCREEN ==========
+    function goFullScreen() {
+        let elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+    }
+
+    // ========== ANTI-CHEATING FEATURES ==========
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    document.onkeydown = function(e) {
+        if (
+            e.keyCode === 123 || // F12
+            (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 83)) || // Ctrl+Shift+I/J/S
+            (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 67 || e.keyCode === 86)) // Ctrl+U/C/V
+        ) {
+            return false;
+        }
+    };
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            autoSubmit("You navigated away. Submitting your quiz.");
+        }
+    });
+
+    window.addEventListener("blur", () => {
+        autoSubmit("You switched tabs. Submitting your quiz.");
+    });
+
+    // ========== AUTO-SUBMIT ==========
+    function autoSubmit(message) {
+        if (!formSubmitted) {
+            formSubmitted = true;
+            alert(message);
+            document.getElementById("quizForm").submit();
+        }
+    }
+</script>
+
+</body>
+</html>

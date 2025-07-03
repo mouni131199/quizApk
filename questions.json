@@ -1,0 +1,22 @@
+[
+  {
+    "question": "What is the capital of India?",
+    "options": ["Delhi", "Mumbai", "Kolkata", "Chennai"],
+    "answer": "Delhi"
+  },
+  {
+    "question": "Which language is used for web development?",
+    "options": ["Python", "HTML", "Java", "C++"],
+    "answer": "HTML"
+  },
+  {
+    "question": "Which keyword is used to define a function in Python?",
+    "options": ["func", "define", "def", "function"],
+    "answer": "def"
+  },
+  {
+    "question": "What does CPU stand for?",
+    "options": ["Central Programming Unit", "Central Processing Unit", "Control Processing Unit", "Computer Personal Unit"],
+    "answer": "Central Processing Unit"
+  }
+]
